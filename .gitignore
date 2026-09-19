@@ -21,3 +21,6 @@ backend/alerts.json
 .pytest_cache/
 .coverage
 *.egg-info/
+
+design.md 
+PLAN.md
