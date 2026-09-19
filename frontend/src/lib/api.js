@@ -82,7 +82,7 @@ export function demoPredict(symptoms = []) {
 }
 
 // ---- local persistence (history, profile, education progress) ----
-const K = { hist: 'niada_history', prof: 'niada_profile', edu: 'niada_edu' }
+const K = { hist: 'herhealth_history', prof: 'herhealth_profile', edu: 'herhealth_edu' }
 export const store = {
   history() { try { return JSON.parse(localStorage.getItem(K.hist) || '[]') } catch { return [] } },
   pushHistory(entry) {

@@ -50,7 +50,7 @@ export default function Settings({ lang, prof, save }) {
           <li>High-risk results notify the ASHA dashboard — nothing else is shared.</li>
           <li>History lives on this phone; clear it anytime:</li>
         </ul>
-        <button type="button" className="btn btn-secondary" onClick={() => { localStorage.removeItem('niada_history'); alert('History cleared on this device.') }}>
+        <button type="button" className="btn btn-secondary" onClick={() => { localStorage.removeItem('herhealth_history'); alert('History cleared on this device.') }}>
           🧹 Clear my history
         </button>
       </div>

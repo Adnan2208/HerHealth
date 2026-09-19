@@ -6,7 +6,7 @@ import { AudioButton } from '../components/UI.jsx'
 // Guided capture: overlay guide + good/bad examples + live quality hints
 // (brightness/size via canvas — icon/color feedback, no paragraphs).
 export default function Scan({ lang }) {
-  const [preview, setPreview] = useState(sessionStorage.getItem('niada_img') || '')
+  const [preview, setPreview] = useState(sessionStorage.getItem('herhealth_img') || '')
   const [info, setInfo] = useState(null)
   const fileRef = useRef(null)
   const nav = useNavigate()
@@ -19,8 +19,8 @@ export default function Scan({ lang }) {
     const reader = new FileReader()
     reader.onload = () => {
       const dataUrl = reader.result
-      sessionStorage.setItem('niada_img', dataUrl)
-      sessionStorage.setItem('niada_img_name', f.name || 'upload.jpg')
+      sessionStorage.setItem('herhealth_img', dataUrl)
+      sessionStorage.setItem('herhealth_img_name', f.name || 'upload.jpg')
       setPreview(dataUrl)
       // quality probe
       const img = new Image()
@@ -86,7 +86,7 @@ export default function Scan({ lang }) {
             </div>
           )}
           <div className="grid2" style={{ marginTop: 10 }}>
-            <button className="btn btn-secondary" onClick={() => { sessionStorage.removeItem('niada_img'); setPreview(''); setInfo(null) }} type="button">{t(lang, 'retake')}</button>
+            <button className="btn btn-secondary" onClick={() => { sessionStorage.removeItem('herhealth_img'); setPreview(''); setInfo(null) }} type="button">{t(lang, 'retake')}</button>
             <button className="btn btn-primary" onClick={() => nav('/symptoms')} type="button">{t(lang, 'confirmUse')}</button>
           </div>
           <p className="muted">On upload the server saves your file as <code>image.png</code> then runs the AI pipeline.</p>
@@ -98,13 +98,13 @@ export default function Scan({ lang }) {
 
 // Convert stored dataURL back to a File for upload
 export function storedImageFile() {
-  const dataUrl = sessionStorage.getItem('niada_img')
+  const dataUrl = sessionStorage.getItem('herhealth_img')
   if (!dataUrl) return null
   const [head, b64] = dataUrl.split(',')
   const mime = (head.match(/data:(.*?);/) || [])[1] || 'image/jpeg'
   const bin = atob(b64)
   const bytes = new Uint8Array(bin.length)
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
-  const name = sessionStorage.getItem('niada_img_name') || 'upload.jpg'
+  const name = sessionStorage.getItem('herhealth_img_name') || 'upload.jpg'
   return new File([bytes], name, { type: mime })
 }

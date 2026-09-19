@@ -7,7 +7,7 @@ import { AudioButton, Chip, RiskBanner } from '../components/UI.jsx'
 export default function Results({ lang }) {
   const nav = useNavigate()
   let res = null
-  try { res = JSON.parse(sessionStorage.getItem('niada_result') || 'null') } catch { res = null }
+  try { res = JSON.parse(sessionStorage.getItem('herhealth_result') || 'null') } catch { res = null }
 
   if (!res) {
     return (

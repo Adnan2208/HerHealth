@@ -12,7 +12,7 @@ export const LANGS = [
 ]
 
 const en = {
-  appName: 'NIADA',
+  appName: 'HerHealth Ecosystem',
   tagline: 'Health & Anemia Screening',
   start: 'Start ▶',
   home: 'Home', scan: 'Scan', learn: 'Learn', diet: 'Diet', more: 'More',
@@ -52,7 +52,7 @@ const en = {
 }
 
 const hi = {
-  appName: 'NIADA',
+  appName: 'HerHealth Ecosystem',
   tagline: 'स्वास्थ्य और एनीमिया जांच',
   start: 'शुरू करें ▶',
   home: 'घर', scan: 'स्कैन', learn: 'सीखें', diet: 'आहार', more: 'और',
@@ -92,7 +92,7 @@ const hi = {
 }
 
 const mr = {
-  appName: 'NIADA', tagline: 'आरोग्य आणि ॲनिमिया तपासणी', start: 'सुरू करा ▶',
+  appName: 'HerHealth Ecosystem', tagline: 'आरोग्य आणि ॲनिमिया तपासणी', start: 'सुरू करा ▶',
   home: 'मुख्य', scan: 'स्कॅन', learn: 'शिका', diet: 'आहार', more: 'अधिक',
   welcome: 'नमस्कार 🙏 — तुमची आरोग्य मैत्रीण',
   homeSub: 'मासिक पाळी शिका. पापणीच्या फोटोने ॲनिमिया तपासा.',
@@ -114,7 +114,7 @@ const mr = {
 }
 
 const ta = {
-  appName: 'NIADA', tagline: 'ஆரோக்கியம் & இரத்தசோகை பரிசோதனை', start: 'தொடங்கு ▶',
+  appName: 'HerHealth Ecosystem', tagline: 'ஆரோக்கியம் & இரத்தசோகை பரிசோதனை', start: 'தொடங்கு ▶',
   home: 'முகப்பு', scan: 'ஸ்கேன்', learn: 'கற்க', diet: 'உணவு', more: 'மேலும்',
   welcome: 'வணக்கம் 🙏 — உங்கள் நலத் தோழி',
   homeSub: 'மாதவிடாய் பற்றி அறியுங்கள். கண் இமை புகைப்படத்தால் இரத்தசோகை பரிசோதனை.',
@@ -138,7 +138,7 @@ const ta = {
 }
 
 const te = {
-  appName: 'NIADA', tagline: 'ఆరోగ్యం & రక్తహీనత పరీక్ష', start: 'ప్రారంభించు ▶',
+  appName: 'HerHealth Ecosystem', tagline: 'ఆరోగ్యం & రక్తహీనత పరీక్ష', start: 'ప్రారంభించు ▶',
   home: 'హోమ్', scan: 'స్కాన్', learn: 'నేర్చుకో', diet: 'ఆహారం', more: 'మరిన్ని',
   welcome: 'నమస్తే 🙏 — మీ ఆరోగ్య స్నేహితురాలు',
   homeSub: 'రుతుక్రమం గురించి తెలుసుకోండి. కనురెప్ప ఫోటోతో రక్తహీనత పరీక్ష.',
@@ -162,7 +162,7 @@ const te = {
 }
 
 const bn = {
-  appName: 'NIADA', tagline: 'স্বাস্থ্য ও রক্তাল্পতা পরীক্ষা', start: 'শুরু করুন ▶',
+  appName: 'HerHealth Ecosystem', tagline: 'স্বাস্থ্য ও রক্তাল্পতা পরীক্ষা', start: 'শুরু করুন ▶',
   home: 'হোম', scan: 'স্ক্যান', learn: 'শিখুন', diet: 'খাবার', more: 'আরও',
   welcome: 'নমস্কার 🙏 — আপনার স্বাস্থ্য বান্ধবী',
   homeSub: 'মাসিক সম্পর্কে জানুন। চোখের পাতার ছবিতে রক্তাল্পতা পরীক্ষা।',

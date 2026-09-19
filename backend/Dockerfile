@@ -17,7 +17,7 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # App + model + cropper.
 # NOTE: build context must be the repo root (Anemia-Test/), e.g.:
-#   docker build -f backend/Dockerfile -t niada-backend .
+#   docker build -f backend/Dockerfile -t herhealth-backend .
 COPY backend/app.py ./app.py
 COPY Computer-Vision/crop_conjunctiva.py ./crop_conjunctiva.py
 COPY Computer-Vision/anemia_mobilenetv3 ./anemia_mobilenetv3

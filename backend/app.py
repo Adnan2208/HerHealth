@@ -1,4 +1,4 @@
-"""NIADA Anemia screening backend (FastAPI).
+"""HerHealth Ecosystem anemia screening backend (FastAPI).
 
 Mirrors Computer-Vision/final_script.py exactly:
   upload -> saved internally as image.png -> crop_conjunctiva
@@ -215,7 +215,7 @@ def _write_alerts(alerts: list) -> None:
 
 
 # ---------------------------------------------------------------- app -------
-app = FastAPI(title="NIADA Anemia Screening API", version="1.0.0")
+app = FastAPI(title="HerHealth Ecosystem Anemia Screening API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -268,7 +268,7 @@ async def predict(
     # ---- save as image.png (as requested) then run final_script pipeline ----
     # Use an isolated temp dir per request so concurrent users don't clash,
     # but the file inside is always named image.png for traceability.
-    tmpdir = tempfile.mkdtemp(prefix="niada_")
+    tmpdir = tempfile.mkdtemp(prefix="herhealth_")
     image_png = os.path.join(tmpdir, "image.png")
     with open(image_png, "wb") as f:
         f.write(raw)
@@ -442,7 +442,7 @@ def hospitals(lat: float = 19.0760, lon: float = 72.8777):
 def root():
     return JSONResponse(
         {
-            "service": "NIADA Anemia Screening API",
+            "service": "HerHealth Ecosystem Anemia Screening API",
             "docs": "/docs",
             "health": "/api/health",
             "predict": "POST /api/predict (multipart: image, symptoms, name, phone, language, lat, lon)",

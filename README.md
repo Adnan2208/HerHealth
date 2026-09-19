@@ -1,4 +1,4 @@
-# NIADA — Menstrual Health + Anemia Screening (Eyelid AI)
+# HerHealth Ecosystem — Menstrual Health + Anemia Screening (Eyelid AI)
 
 Mobile-first app for low-literacy users + ASHA worker dashboard.
 Upload an eyelid photo → server saves it as `image.png` → runs the
@@ -69,8 +69,8 @@ runs crop → 224px → `mobilenet_v3.preprocess_input` → predict — same as
 
 ### Option B — Koyeb / Railway / Fly.io (Docker, free tier)
 ```bash
-docker build -f backend/Dockerfile -t niada-backend .
-docker run -p 8000:8000 -e FRONTEND_URL='*' niada-backend
+docker build -f backend/Dockerfile -t herhealth-backend .
+docker run -p 8000:8000 -e FRONTEND_URL='*' herhealth-backend
 # then point the platform at this Dockerfile, expose 8000.
 ```
 

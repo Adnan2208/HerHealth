@@ -57,7 +57,7 @@ export default function Symptoms({ lang, prof }) {
         console.warn('backend unreachable, demo fallback', netErr)
         res = { ...demoPredict(symptoms), demoReason: String(netErr.message || netErr) }
       }
-      sessionStorage.setItem('niada_result', JSON.stringify(res))
+      sessionStorage.setItem('herhealth_result', JSON.stringify(res))
       store.pushHistory({ band: res.risk_band, label: res.label, conf: res.confidence, symptoms, demo: !!res.demo })
       nav('/results')
     } catch (e) {

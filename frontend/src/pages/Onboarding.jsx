@@ -9,7 +9,7 @@ const STEPS = [
 ]
 
 export default function Onboarding({ lang }) {
-  const intro = 'NIADA helps you learn about periods and check anemia with an eyelid photo. Your data stays private.'
+  const intro = 'HerHealth Ecosystem helps you learn about periods and check anemia with an eyelid photo. Your data stays private.'
   return (
     <section aria-labelledby="ob-title">
       <div className="card card-warm center">
