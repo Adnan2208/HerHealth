@@ -16,7 +16,7 @@ export default function Results({ lang }) {
 
   if (!res) {
     return (
-      <section className="center">
+      <section className="center stack narrow" style={{ alignItems: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <span className="icon-tile" style={{ width: 72, height: 72, borderRadius: 22 }} aria-hidden="true">
             <Icon name="camera" />
@@ -35,7 +35,7 @@ export default function Results({ lang }) {
   const readout = `${band === 'low' ? t(lang, 'riskLow') : band === 'moderate' ? t(lang, 'riskModerate') : band === 'high' ? t(lang, 'riskHigh') : t(lang, 'riskLowConf')}. AI says ${res.label} with ${(res.confidence * 100).toFixed(0)} percent confidence.`
 
   return (
-    <section aria-labelledby="res-title">
+    <section aria-labelledby="res-title" className="stack">
       <h2 id="res-title" className="sr-only">Result</h2>
       {res.demo && <div className="alert alert-warn" role="note"><Icon name="alertTriangle" /><span>{t(lang, 'demoNote')}</span></div>}
       {res.mock && !res.demo && <div className="alert alert-info" role="note"><Icon name="info" /><span>Server ran in <code>ANEMIA_MOCK=1</code> mode (no TF). Deploy with the real model for medical use.</span></div>}
@@ -43,14 +43,14 @@ export default function Results({ lang }) {
       <RiskBanner band={band} lang={lang} confidence={res.confidence} />
       <AudioButton text={readout} lang={lang} />
 
-      <div className="card details-card">
+      <div className="split">
+      <div className="card details-card stack">
         <span className="eyebrow"><Icon name="eye" /> AI details</span>
-        <div style={{ height: 8 }} />
         <div className="kv"><span>AI label</span><strong>{res.label} ({(res.confidence * 100).toFixed(1)}%)</strong></div>
         <div className="kv"><span>Anemic prob</span><span>{res.prob_anemic}</span></div>
         <div className="kv"><span>Crop</span><span>{res.crop_method}</span></div>
         <div className="kv"><span>Symptoms</span><span>{(res.symptoms || []).join(', ') || 'None'}</span></div>
-        <div style={{ marginTop: 8, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+        <div className="chip-row">
           <Chip kind={BAND_KIND[band] || 'grey'} dot={BAND_DOT[band] || 'circle'}>
             {band.replace('_', ' ')}
           </Chip>
@@ -60,6 +60,7 @@ export default function Results({ lang }) {
       </div>
 
       {/* Single next action per tier: primary action is visually dominant */}
+      <div className="stack">
       {band === 'low' && (
         <Link className="btn btn-primary" to="/diet"><Icon name="bowl" /> {plain(t(lang, 'viewDiet'))}</Link>
       )}
@@ -70,7 +71,7 @@ export default function Results({ lang }) {
         </>
       )}
       {band === 'low_confidence' && (
-        <div className="card">
+        <div className="card stack">
           <span className="eyebrow"><Icon name="droplet" /> Next step</span>
           <h3>Hb blood test: what happens?</h3>
           <p className="muted">A tiny finger prick, one drop of blood, result in minutes. It does not hurt much. This confirms what the photo could not.</p>
@@ -78,7 +79,7 @@ export default function Results({ lang }) {
         </div>
       )}
       {band === 'high' && (
-        <div className="card">
+        <div className="card stack">
           <span className="eyebrow"><Icon name="bell" /> Urgent</span>
           <h3>{plain(t(lang, 'helpComing'))}</h3>
           <p>ASHA worker notified{res.alert_id ? <> (case <code>{res.alert_id}</code>)</> : null}. While waiting:</p>
@@ -88,10 +89,11 @@ export default function Results({ lang }) {
             <li>Carry this result + any past reports.</li>
           </ol>
           <a className="emergency-call" href="tel:108"><Icon name="phone" /> Emergency: call 108</a>
-          <div style={{ height: 10 }} />
           <Link className="btn btn-primary" to="/hospitals"><Icon name="pin" /> {plain(t(lang, 'findNearest'))}</Link>
         </div>
       )}
+      </div>
+      </div>
 
       <div className="grid2">
         <Link className="btn btn-secondary" to="/scan"><Icon name="refresh" /> {plain(t(lang, 'retake'))}</Link>

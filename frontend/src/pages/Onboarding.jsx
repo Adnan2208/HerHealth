@@ -11,7 +11,7 @@ const STEPS = [
 export default function Onboarding({ lang }) {
   const intro = 'HerHealth Ecosystem helps you learn about periods and check anemia with an eyelid photo. Your data stays private.'
   return (
-    <section aria-labelledby="ob-title">
+    <section aria-labelledby="ob-title" className="stack narrow">
       <div className="card card-warm center">
         <div className="big-emoji" aria-hidden="true">🩸🤝</div>
         <h2 id="ob-title" style={{ margin: '8px 0' }}>{t(lang, 'welcome')}</h2>

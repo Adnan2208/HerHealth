@@ -37,10 +37,12 @@ export default function Hospitals({ lang }) {
   }
 
   return (
-    <section aria-labelledby="h-title">
+    <section aria-labelledby="h-title" className="stack">
+      <div className="section-head">
       <h2 id="h-title">🏥 {t(lang, 'findHospital')}</h2>
       <button className="btn btn-primary" onClick={locate} type="button">📍 Locate me + nearest list</button>
       <p className="muted">{note}</p>
+      </div>
       {pos && (
         <div className="card">
           <iframe
@@ -54,7 +56,7 @@ export default function Hospitals({ lang }) {
         <div className="card" key={i}>
           <strong>{h.name}</strong>
           <div className="muted">{h.area} {h.distance_km != null ? `• ${h.distance_km} km` : ''}</div>
-          <div className="row" style={{ marginTop: 8 }}>
+          <div className="btn-row">
             <a className="btn btn-secondary" href={`tel:${h.phone}`} aria-label={`Call ${h.name}`}>📞 {h.phone}</a>
             <a
               className="btn btn-secondary"

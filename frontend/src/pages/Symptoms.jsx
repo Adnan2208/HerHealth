@@ -68,7 +68,8 @@ export default function Symptoms({ lang, prof }) {
   }
 
   return (
-    <section aria-labelledby="sym-title">
+    <section aria-labelledby="sym-title" className="stack">
+      <div className="section-head">
       <span className="eyebrow"><Icon name="clipboard" /> Step 2 of 3</span>
       <div className="row" style={{ justifyContent: 'space-between' }}>
         <h2 id="sym-title" className="section-title">{t(lang, 'symptomsTitle')}</h2>
@@ -77,8 +78,9 @@ export default function Symptoms({ lang, prof }) {
       <div className="step-dots" aria-label="Step 2 of 3: symptoms">
         <i className="done" /><i className="done" /><i />
       </div>
+      </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className="sym-count-row">
         <span className="sym-count" aria-live="polite">
           <Icon name="check" />{picked.length === 0 ? 'Tap what you feel' : `${picked.length} selected`}
         </span>
@@ -102,7 +104,8 @@ export default function Symptoms({ lang, prof }) {
         })}
       </div>
 
-      <div className="card">
+      <div className="split">
+      <div className="card stack">
         <label className="lbl" htmlFor="typed"><Icon name="pencil" /> Type symptoms (comma separated)</label>
         <input
           id="typed" type="text" list="sym-list" value={typed}
@@ -110,18 +113,17 @@ export default function Symptoms({ lang, prof }) {
           placeholder="fatigue, dizziness..." autoComplete="off"
         />
         <datalist id="sym-list">{COMMON.map((c) => <option key={c} value={c} />)}</datalist>
-        <div style={{ height: 8 }} />
         <button className="btn btn-secondary" onClick={startVoice} type="button" aria-label="Voice symptom input">
           <Icon name="mic" /> {listening ? 'Listening... speak now' : 'Speak symptoms'} ({lang})
         </button>
       </div>
 
-      <div className="card">
+      <div className="card stack">
         <label className="lbl" htmlFor="nm"><Icon name="user" /> Name (optional, for ASHA follow-up)</label>
         <input id="nm" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Meena" />
-        <div style={{ height: 8 }} />
         <label className="lbl" htmlFor="ph"><Icon name="phone" /> Phone (optional)</label>
         <input id="ph" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="98..." />
+      </div>
       </div>
 
       {err && <div className="alert alert-err" role="alert"><Icon name="octagon" /><span>{err}</span></div>}

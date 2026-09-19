@@ -8,10 +8,12 @@ const DOT = { low: '🟢', moderate: '🟡', low_confidence: '🔵', high: '🔴
 export default function History({ lang }) {
   const h = store.history()
   return (
-    <section aria-labelledby="hi-title">
+    <section aria-labelledby="hi-title" className="stack">
+      <div className="section-head">
       <h2 id="hi-title">🕘 {t(lang, 'history')}</h2>
+      </div>
       {h.length === 0 && (
-        <div className="card center">
+        <div className="card center stack" style={{ alignItems: 'center' }}>
           <div className="big-emoji" aria-hidden="true">📭</div>
           <p className="muted">No checks yet. Your scans will appear here as dots over time.</p>
           <Link className="btn btn-primary" to="/scan">{t(lang, 'checkAnemia')}</Link>

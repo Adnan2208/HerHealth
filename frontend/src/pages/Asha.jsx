@@ -42,8 +42,10 @@ export default function Asha({ lang }) {
   }
 
   return (
-    <section aria-labelledby="asha-title" style={{ width: '100%' }}>
+    <section aria-labelledby="asha-title" className="stack" style={{ width: '100%' }}>
+      <div className="section-head">
       <h2 id="asha-title">👩‍⚕️ {t(lang, 'asha')} Dashboard</h2>
+      </div>
       <div className="row" style={{ flexWrap: 'wrap' }}>
         <button className="audio-btn" onClick={load} type="button">↻ Refresh</button>
         {['', ...STATUS].map((s) => (
@@ -55,7 +57,7 @@ export default function Asha({ lang }) {
       {err && <div className="alert alert-warn" role="note">{err}</div>}
 
       <div className="asha-cols">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="stack" style={{ gap: 10 }}>
           {shown.length === 0 && <div className="card muted">No high-risk patients yet. High-risk scans appear here automatically.</div>}
           {shown.map((a) => (
             <button
@@ -67,7 +69,7 @@ export default function Asha({ lang }) {
               <div style={{ flex: 1 }}>
                 <strong>{a.name || 'Unnamed'}</strong>
                 <div className="muted">{new Date(a.created_at).toLocaleString()} • {(a.symptoms || []).slice(0, 3).join(', ')}</div>
-                <div style={{ marginTop: 4, display: 'flex', gap: 6 }}>
+                <div className="chip-row">
                   <Chip kind="red">🔴 high</Chip>
                   <Chip kind="grey">{STATUS_ICON[a.status] || '•'} {a.status}</Chip>
                 </div>
