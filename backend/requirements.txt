@@ -1,10 +1,15 @@
-# Keep cloud images slim: opencv-headless (not opencv-python), no matplotlib.
+# Slim backend deps: Lite runtime instead of full TensorFlow.
+# fastapi/uvicorn/multipart/numpy/pillow unchanged in spirit (uvicorn slimmed,
+# numpy kept at 1.26 for TF-converter compat and small wheels).
 fastapi==0.115.6
-uvicorn[standard]==0.34.0
+uvicorn==0.34.0
 python-multipart==0.0.20
 numpy==1.26.4
 pillow==11.1.0
 opencv-python-headless==4.10.0.84
-tensorflow==2.19.0
-# NOTE: TF is ~500MB. Required for real inference. For UI-only testing
-# without TF, run with ANEMIA_MOCK=1 (no TF import attempted).
+ai-edge-litert==2.2.0
+# NOTE: full tensorflow (~1.8GB installed) is GONE. Real inference runs on
+# Computer-Vision/anemia_mobilenetv3.tflite (~12MB) via ai-edge-litert (~15MB).
+# For UI-only testing without any model: ANEMIA_MOCK=1 (no litert import).
+# One-off conversion needs TF + tf2onnx + onnx2tf; see
+# Computer-Vision/convert_to_tflite.py (local toolchain, never deployed).

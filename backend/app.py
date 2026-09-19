@@ -3,14 +3,19 @@
 Mirrors Computer-Vision/final_script.py exactly:
   upload -> saved internally as image.png -> crop_conjunctiva
   (redness segmentation + square_box margin 0.35, fallback centre crop)
-  -> BGR->RGB, resize 224, mobilenet_v3.preprocess_input
-  -> anemia_mobilenetv3 predict -> verdict JSON.
+  -> BGR->RGB, resize 224, mobilenet_v3-style scaling ((x/127.5)-1, numpy)
+  -> anemia_mobilenetv3.tflite (ai-edge-litert) predict -> verdict JSON.
+
+Inference backends (in order of preference):
+  1. Lite  (`MODEL_TFLITE`, default ../Computer-Vision/anemia_mobilenetv3.tflite)
+  2. TF rollback (`MODEL_DIR`, only if the .tflite is missing AND TF installed)
+  3. Mock (`ANEMIA_MOCK=1`, brightness heuristic, flagged `mock: true`)
 
 Run locally:
     pip install -r requirements.txt
     uvicorn app:app --reload --port 8000
-    # model is expected at ../Computer-Vision/anemia_mobilenetv3
-    # or set MODEL_DIR env var.
+    # model is expected at ../Computer-Vision/anemia_mobilenetv3.tflite
+    # or set MODEL_TFLITE env var.
 
 Deploy (free, no 5-min sleep like Render free):
   Frontend (this repo's /frontend) -> Netlify or Vercel (static).
@@ -19,7 +24,7 @@ Deploy (free, no 5-min sleep like Render free):
   in the frontend to point at the backend URL.
 
 Why not backend on Netlify/Vercel?
-  TensorFlow (~500MB+) + OpenCV exceed serverless size/timeout limits.
+  Even the Lite model + cv2 exceed serverless size/timeout limits.
   Static frontend + separate Python backend is the only reliable free path.
   (A fully-static TF.js in-browser option is a future enhancement.)
 """
@@ -45,6 +50,9 @@ CV_DIR = REPO_ROOT / "Computer-Vision"
 DEFAULT_MODEL_DIR = CV_DIR / "anemia_mobilenetv3"
 
 MODEL_DIR = Path(os.environ.get("MODEL_DIR", str(DEFAULT_MODEL_DIR)))
+MODEL_TFLITE = Path(
+    os.environ.get("MODEL_TFLITE", str(CV_DIR / "anemia_mobilenetv3.tflite"))
+)
 ALERTS_FILE = Path(os.environ.get("ALERTS_FILE", str(HERE / "alerts.json")))
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "*")
 MOCK_MODE = os.environ.get("ANEMIA_MOCK", "0") == "1"
@@ -114,43 +122,98 @@ def _crop_with_pil(pil_img):
 
 
 # ---------------------------------------------------------------- model -----
+# Backend kinds: "lite" (ai-edge-litert, prod default), "tf" (rollback),
+# "mock" (ANEMIA_MOCK=1). _model holds the interpreter / keras model.
 _model = None
 _model_error = None
+_model_kind = None
+
+
+def _load_lite():
+    from ai_edge_litert.interpreter import Interpreter
+
+    print(f"[model] loading Lite: {MODEL_TFLITE}", flush=True)
+    interp = Interpreter(model_path=str(MODEL_TFLITE))
+    interp.allocate_tensors()
+    print("[model] Lite loaded OK", flush=True)
+    return interp
+
+
+def _load_tf():
+    import tensorflow as tf  # local import: keeps --help/fast paths light
+
+    print(f"[model] loading TF rollback: {MODEL_DIR}", flush=True)
+    keras_model = tf.keras.models.load_model(str(MODEL_DIR))
+    print("[model] TF loaded OK", flush=True)
+    return keras_model
 
 
 def get_model():
-    """Lazy-load the Keras model once; raise HTTPException with helpful message if unavailable."""
-    global _model, _model_error
+    """Lazy-load the model once; Lite first, TF rollback, else 503.
+
+    Returns (model, kind). Raises HTTPException with a helpful message if
+    no backend is available (mock mode is handled by the caller).
+    """
+    global _model, _model_error, _model_kind
     if MOCK_MODE:
-        return None
+        return None, "mock"
     if _model is not None:
-        return _model
+        return _model, _model_kind
     if _model_error is not None:
         raise _model_error
-    try:
-        import tensorflow as tf  # local import: keeps --help/fast paths light
+    errors = []
+    if MODEL_TFLITE.exists():
+        try:
+            _model = _load_lite()
+            _model_kind = "lite"
+            return _model, _model_kind
+        except Exception as e:
+            errors.append(f"Lite load failed ({e})")
+    else:
+        errors.append(f"{MODEL_TFLITE} not found")
+    if MODEL_DIR.exists():
+        try:
+            _model = _load_tf()
+            _model_kind = "tf"
+            return _model, _model_kind
+        except Exception as e:
+            errors.append(f"TF rollback failed ({e})")
+    else:
+        errors.append(f"{MODEL_DIR} not found")
+    msg = (
+        f"Model unavailable: {'; '.join(errors)}. "
+        "Set MODEL_TFLITE env var, or run with ANEMIA_MOCK=1 for UI testing."
+    )
+    print(f"[model] ERROR: {msg}", flush=True)
+    _model_error = HTTPException(status_code=503, detail=msg)
+    raise _model_error
 
-        print(f"[model] loading: {MODEL_DIR}", flush=True)
-        _model = tf.keras.models.load_model(str(MODEL_DIR))
-        print("[model] loaded OK", flush=True)
-        return _model
-    except Exception as e:
-        msg = (
-            f"Model load failed from {MODEL_DIR}: {e}. "
-            "Set MODEL_DIR env var, or run with ANEMIA_MOCK=1 for UI testing without TF."
-        )
-        print(f"[model] ERROR: {msg}", flush=True)
-        _model_error = HTTPException(status_code=503, detail=msg)
-        raise _model_error
+
+def predict_probs(model, kind, x):
+    """Run one preprocessed batch; returns [p_anemic, p_non_anemic]."""
+    if kind == "lite":
+        inp = model.get_input_details()[0]
+        out = model.get_output_details()[0]
+        model.set_tensor(inp["index"], x.astype(inp["dtype"]))
+        model.invoke()
+        return [float(p) for p in model.get_tensor(out["index"])[0]]
+    # TF rollback: identical math to final_script.py.
+    return [float(p) for p in model.predict(x, verbose=0)[0]]
 
 
 def preprocess_for_model(crop_rgb_224):
-    from tensorflow.keras.applications.mobilenet_v3 import preprocess_input
+    """Match final_script.py / original serving behavior EXACTLY (numpy, no TF).
 
+    Measured fact (TF 2.19): `mobilenet_v3.preprocess_input` on float32 input
+    returns it UNCHANGED (identity), so the deployed pipeline feeds RAW
+    [0,255] pixels and the model's inner Rescaling(1/127.5, -1) does the only
+    [0,255]->[-1,1] mapping. Do NOT add (x/127.5)-1 here: that
+    double-normalizes and shifts outputs catastrophically (measured
+    p_anemic 0.9994 -> 0.026 on the same crop). Only expand batch dim.
+    """
     import numpy as np
 
-    x = preprocess_input(crop_rgb_224.astype("float32"))
-    return np.expand_dims(x, 0)
+    return np.expand_dims(crop_rgb_224.astype("float32"), 0)
 
 
 def mock_probs_from_brightness(crop_rgb_224) -> list:
@@ -230,8 +293,11 @@ app.add_middleware(
 def health():
     return {
         "status": "ok",
+        "model_tflite": str(MODEL_TFLITE),
+        "model_tflite_exists": MODEL_TFLITE.exists(),
         "model_dir": str(MODEL_DIR),
         "model_exists": MODEL_DIR.exists(),
+        "backend": _model_kind or ("mock" if MOCK_MODE else "unloaded"),
         "have_cv2": HAVE_CV2,
         "have_cropper": HAVE_CROPPER,
         "mock_mode": MOCK_MODE,
@@ -311,9 +377,9 @@ async def predict(
     print(f"[cropper] input: image.png ({iw}x{ih}) method={method} square=({x0},{y0},{x1},{y1})", flush=True)
 
     # ---- model ----
-    model = None
+    model, kind = None, "mock"
     try:
-        model = get_model()
+        model, kind = get_model()
     except HTTPException as he:
         # In non-mock mode a missing model is a hard error (503 with instructions).
         raise he
@@ -321,10 +387,13 @@ async def predict(
     if model is None:  # MOCK_MODE
         probs = mock_probs_from_brightness(crop_rgb)
         mock_used = True
+        model_ms = 0
     else:
         x = preprocess_for_model(crop_rgb)
-        preds = model.predict(x, verbose=0)[0]
-        probs = [float(p) for p in preds]
+        m0 = time.time()
+        probs = predict_probs(model, kind, x)
+        model_ms = int((time.time() - m0) * 1000)
+        print(f"[model] backend={kind} inference_ms={model_ms}", flush=True)
 
     import numpy as np2
 
@@ -381,6 +450,8 @@ async def predict(
         "alert_id": alert_id,
         "mock": mock_used,
         "inference_ms": elapsed_ms,
+        "model_ms": model_ms,
+        "backend": kind,
     }
 
 
