@@ -3,9 +3,9 @@ import { t } from '../i18n.js'
 import { AudioButton } from '../components/UI.jsx'
 
 const STEPS = [
-  { e: '📚', en: 'Learn about periods — pictures + voice, no reading needed', hi: 'मासिक धर्म सीखें — चित्र + आवाज़' },
-  { e: '📸', en: 'Photo of lower eyelid — AI checks anemia risk', hi: 'पलक की फोटो — AI एनीमिया जांच' },
-  { e: '🔒', en: 'Private by design — you control what is shared', hi: 'पूरी निजता — आपकी अनुमति से ही साझा' },
+  { e: '📚', en: 'Learn about periods: pictures + voice, no reading needed', hi: 'मासिक धर्म सीखें: चित्र + आवाज़' },
+  { e: '📸', en: 'Photo of lower eyelid: AI checks anemia risk', hi: 'पलक की फोटो: AI एनीमिया जांच' },
+  { e: '🔒', en: 'Private by design: you control what is shared', hi: 'पूरी निजता: आपकी अनुमति से ही साझा' },
 ]
 
 export default function Onboarding({ lang }) {

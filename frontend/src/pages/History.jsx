@@ -13,7 +13,7 @@ export default function History({ lang }) {
       {h.length === 0 && (
         <div className="card center">
           <div className="big-emoji" aria-hidden="true">📭</div>
-          <p className="muted">No checks yet — your scans will appear here as dots over time.</p>
+          <p className="muted">No checks yet. Your scans will appear here as dots over time.</p>
           <Link className="btn btn-primary" to="/scan">{t(lang, 'checkAnemia')}</Link>
         </div>
       )}

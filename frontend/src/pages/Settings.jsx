@@ -14,7 +14,7 @@ export default function Settings({ lang, prof, save }) {
       <div className="card">
         <label className="lbl" htmlFor="lang-sel">🌐 {t(lang, 'language')}</label>
         <select id="lang-sel" value={lang} onChange={(e) => save({ lang: e.target.value })} aria-label={t(lang, 'language')}>
-          {LANGS.map((l) => <option key={l.code} value={l.code}>{l.native} — {l.label}</option>)}
+          {LANGS.map((l) => <option key={l.code} value={l.code}>{l.native} - {l.label}</option>)}
         </select>
       </div>
 
@@ -47,7 +47,7 @@ export default function Settings({ lang, prof, save }) {
         <h3 style={{ marginTop: 0 }}>🔒 Data & privacy</h3>
         <ul className="muted">
           <li>Photos are sent as <code>image.png</code> to your clinic's server for AI analysis only.</li>
-          <li>High-risk results notify the ASHA dashboard — nothing else is shared.</li>
+          <li>High-risk results notify the ASHA dashboard. Nothing else is shared.</li>
           <li>History lives on this phone; clear it anytime:</li>
         </ul>
         <button type="button" className="btn btn-secondary" onClick={() => { localStorage.removeItem('herhealth_history'); alert('History cleared on this device.') }}>

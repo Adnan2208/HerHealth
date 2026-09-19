@@ -1,5 +1,5 @@
 // Speech helpers: audio readout (SpeechSynthesis) + voice symptom input
-// (SpeechRecognition where supported). No server needed — fully offline-capable.
+// (SpeechRecognition where supported). No server needed, fully offline-capable.
 
 const LANG_VOICE = { en: 'en-IN', hi: 'hi-IN', mr: 'mr-IN', ta: 'ta-IN', te: 'te-IN', bn: 'bn-IN' }
 

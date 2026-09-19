@@ -11,7 +11,7 @@ const FALLBACK = [
 export default function Hospitals({ lang }) {
   const [list, setList] = useState(FALLBACK)
   const [pos, setPos] = useState(null)
-  const [note, setNote] = useState('Demo list — press Locate to sort by your GPS + fetch live list from server.')
+  const [note, setNote] = useState('Demo list. Press Locate to sort by your GPS + fetch live list from server.')
 
   const locate = () => {
     if (!navigator.geolocation) { setNote('GPS not available on this device.'); return }
@@ -31,9 +31,9 @@ export default function Hospitals({ lang }) {
           return +(2 * R * Math.asin(Math.sqrt(h))).toFixed(1)
         }
         setList(FALLBACK.map((h) => ({ ...h, distance_km: km(latitude, longitude, h.lat, h.lon) })).sort((a, b) => a.distance_km - b.distance_km))
-        setNote('Offline — demo list sorted by your GPS.')
+        setNote('Offline. Demo list sorted by your GPS.')
       }
-    }, () => setNote('Location permission denied — showing demo list.'), { timeout: 6000 })
+    }, () => setNote('Location permission denied. Showing demo list.'), { timeout: 6000 })
   }
 
   return (

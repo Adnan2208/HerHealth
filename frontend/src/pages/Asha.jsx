@@ -33,7 +33,7 @@ export default function Asha({ lang }) {
   const shown = filter ? alerts.filter((a) => a.status === filter) : alerts
 
   const setStatus = async (a, s) => {
-    if (a.local) { alert('Local demo entry — status lives on the server in production.'); return }
+    if (a.local) { alert('Local demo entry. Status lives on the server in production.'); return }
     try {
       const updated = await apiAlertStatus(a.id, s)
       setAlerts((prev) => prev.map((x) => (x.id === a.id ? updated : x)))
@@ -80,11 +80,11 @@ export default function Asha({ lang }) {
           {!sel && <p className="muted">Select a patient → see eyelid image, symptoms, AI confidence, recommended action.</p>}
           {sel && (
             <>
-              <h3 style={{ marginTop: 0 }}>{sel.name} — case <code>{sel.id}</code></h3>
+              <h3 style={{ marginTop: 0 }}>{sel.name} - case <code>{sel.id}</code></h3>
               <div className="kv"><span>Risk</span><span>🔴 high ({sel.label}, {(sel.confidence * 100).toFixed(0)}%)</span></div>
-              <div className="kv"><span>Symptoms</span><span>{(sel.symptoms || []).join(', ') || '—'}</span></div>
-              <div className="kv"><span>Phone</span><span>{sel.phone ? <a href={`tel:${sel.phone}`}>{sel.phone}</a> : '—'}</span></div>
-              <div className="kv"><span>Location</span><span>{sel.lat && sel.lon ? <a href={`https://www.openstreetmap.org/?mlat=${sel.lat}&mlon=${sel.lon}#map=15/${sel.lat}/${sel.lon}`} target="_blank" rel="noreferrer">📍 map ({sel.lat},{sel.lon})</a> : '—'}</span></div>
+              <div className="kv"><span>Symptoms</span><span>{(sel.symptoms || []).join(', ') || 'None'}</span></div>
+              <div className="kv"><span>Phone</span><span>{sel.phone ? <a href={`tel:${sel.phone}`}>{sel.phone}</a> : 'Not given'}</span></div>
+              <div className="kv"><span>Location</span><span>{sel.lat && sel.lon ? <a href={`https://www.openstreetmap.org/?mlat=${sel.lat}&mlon=${sel.lon}#map=15/${sel.lat}/${sel.lon}`} target="_blank" rel="noreferrer">📍 map ({sel.lat},{sel.lon})</a> : 'Not given'}</span></div>
               <div className="kv"><span>Action</span><span>Urgent Hb test + clinic visit; ASHA field visit</span></div>
               <h4>Status</h4>
               <div className="row" style={{ flexWrap: 'wrap' }}>

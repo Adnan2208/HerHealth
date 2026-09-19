@@ -4,7 +4,7 @@ import { t } from '../i18n.js'
 import { AudioButton } from '../components/UI.jsx'
 
 // Guided capture: overlay guide + good/bad examples + live quality hints
-// (brightness/size via canvas — icon/color feedback, no paragraphs).
+// (brightness/size via canvas: icon/color feedback, no paragraphs).
 export default function Scan({ lang }) {
   const [preview, setPreview] = useState(sessionStorage.getItem('herhealth_img') || '')
   const [info, setInfo] = useState(null)
@@ -49,7 +49,7 @@ export default function Scan({ lang }) {
 
   return (
     <section aria-labelledby="scan-title">
-      <h2 id="scan-title">📸 {t(lang, 'scan')} — eyelid photo</h2>
+      <h2 id="scan-title">📸 {t(lang, 'scan')} - eyelid photo</h2>
       <div className="card">
         <p><strong>{t(lang, 'scanHelp')}</strong></p>
         <AudioButton text={t(lang, 'scanHelp')} lang={lang} />

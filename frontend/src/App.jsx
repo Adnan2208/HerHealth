@@ -3,6 +3,7 @@ import { HashRouter, NavLink, Route, Routes, useNavigate } from 'react-router-do
 import { LANGS, t } from './i18n.js'
 import { store } from './lib/api.js'
 import { stopSpeak } from './lib/speech.js'
+import { Icon } from './components/UI.jsx'
 import Onboarding from './pages/Onboarding.jsx'
 import Language from './pages/Language.jsx'
 import Home from './pages/Home.jsx'
@@ -27,6 +28,14 @@ function useProfile() {
   return [prof, save]
 }
 
+const TABS = [
+  { to: '/home', key: 'home', icon: 'home' },
+  { to: '/scan', key: 'scan', icon: 'camera' },
+  { to: '/learn', key: 'learn', icon: 'book' },
+  { to: '/diet', key: 'diet', icon: 'bowl' },
+  { to: '/settings', key: 'more', icon: 'settings' },
+]
+
 function Shell() {
   const [prof, save] = useProfile()
   const lang = prof.lang
@@ -40,9 +49,12 @@ function Shell() {
   return (
     <div className="app-shell">
       <header className="topbar" role="banner">
-        <button className="icon-btn" aria-label="Back" onClick={() => nav(-1)} type="button">←</button>
-        <div>
-          <h1>{t(lang, 'appName')} <span aria-hidden="true">🩸</span></h1>
+        <button className="icon-btn" aria-label="Back" onClick={() => nav(-1)} type="button">
+          <Icon name="back" />
+        </button>
+        <span className="brand-mark" aria-hidden="true"><Icon name="droplet" /></span>
+        <div className="topbar-titles">
+          <h1>{t(lang, 'appName')}</h1>
           <div className="sub">{t(lang, 'tagline')}</div>
         </div>
         <div style={{ marginLeft: 'auto' }} className="row">
@@ -71,16 +83,11 @@ function Shell() {
       </main>
 
       <nav className="tabbar" aria-label="Main navigation">
-        <NavLink to="/home" className={({ isActive }) => isActive ? 'active' : ''} aria-label={t(lang, 'home')}>
-          <span className="ti" aria-hidden="true">🏠</span>{t(lang, 'home')}</NavLink>
-        <NavLink to="/scan" className={({ isActive }) => isActive ? 'active' : ''} aria-label={t(lang, 'scan')}>
-          <span className="ti" aria-hidden="true">📸</span>{t(lang, 'scan')}</NavLink>
-        <NavLink to="/learn" className={({ isActive }) => isActive ? 'active' : ''} aria-label={t(lang, 'learn')}>
-          <span className="ti" aria-hidden="true">📚</span>{t(lang, 'learn')}</NavLink>
-        <NavLink to="/diet" className={({ isActive }) => isActive ? 'active' : ''} aria-label={t(lang, 'diet')}>
-          <span className="ti" aria-hidden="true">🥗</span>{t(lang, 'diet')}</NavLink>
-        <NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''} aria-label={t(lang, 'more')}>
-          <span className="ti" aria-hidden="true">⚙️</span>{t(lang, 'more')}</NavLink>
+        {TABS.map((tab) => (
+          <NavLink key={tab.to} to={tab.to} className={({ isActive }) => isActive ? 'active' : ''} aria-label={t(lang, tab.key)}>
+            <Icon name={tab.icon} />{t(lang, tab.key)}
+          </NavLink>
+        ))}
       </nav>
     </div>
   )
