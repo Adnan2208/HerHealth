@@ -1,0 +1,17 @@
+# Netlify: Root directory = frontend/  (or keep repo root + base below)
+# Build: npm run build | Publish: frontend/dist  (or dist if root=frontend)
+[build]
+  base = "frontend/"
+  publish = "dist/"
+  command = "npm install && npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Set in Netlify UI → Site settings → Environment variables:
+  # VITE_API_URL = https://<your-backend>.hf.space  (no trailing slash)
+
+# HashRouter is used, so no SPA rewrite is strictly needed; kept for safety.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
