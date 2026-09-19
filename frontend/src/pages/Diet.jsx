@@ -4,9 +4,11 @@ import { AudioButton, FOODS } from '../components/UI.jsx'
 export default function Diet({ lang }) {
   const intro = 'Iron-rich foods every day: green leaves, dal, jaggery, dates. Add lemon for absorption. Avoid tea with meals.'
   return (
-    <section aria-labelledby="d-title">
+    <section aria-labelledby="d-title" className="stack">
+      <div className="section-head">
       <h2 id="d-title">🥗 {t(lang, 'dietTips')}</h2>
       <AudioButton text={intro} lang={lang} />
+      </div>
       <div className="food-grid">
         {FOODS.map((f) => (
           <div className="food" key={f.name}>

@@ -8,8 +8,10 @@ export default function Education({ lang }) {
   const done = store.edu()
   const n = EDU_TOPICS.filter((x) => done[x.id]).length
   return (
-    <section aria-labelledby="edu-title">
+    <section aria-labelledby="edu-title" className="stack">
+      <div className="section-head">
       <h2 id="edu-title">📚 {t(lang, 'learnPeriods')}</h2>
+      </div>
       <div className="card card-warm row">
         <div className="progress-dots" aria-label={`${n} of ${EDU_TOPICS.length} completed`}>
           {EDU_TOPICS.map((x) => <i key={x.id} className={done[x.id] ? 'done' : ''} />)}
@@ -35,7 +37,7 @@ export function EduPlayer({ lang }) {
   const topic = EDU_TOPICS.find((x) => x.id === id) || EDU_TOPICS[0]
   const done = !!store.edu()[topic.id]
   return (
-    <section aria-labelledby="ep-title">
+    <section aria-labelledby="ep-title" className="stack narrow">
       <div className="card center">
         <div style={{ fontSize: 72 }} aria-hidden="true">{topic.emoji}</div>
         <h2 id="ep-title">{topic.title}</h2>

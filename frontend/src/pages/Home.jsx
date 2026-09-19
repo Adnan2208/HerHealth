@@ -9,7 +9,7 @@ const plain = (s) => String(s || '').replace(/^[^\p{L}\p{N}]+/u, '').trim() || s
 export default function Home({ lang }) {
   const online = navigator.onLine
   return (
-    <section aria-labelledby="home-title">
+    <section aria-labelledby="home-title" className="stack">
       <div className="card card-warm hero">
         <span className="eyebrow"><Icon name="heartHandshake" /> Your health friend</span>
         <h2 id="home-title">{t(lang, 'welcome')}</h2>
@@ -27,6 +27,7 @@ export default function Home({ lang }) {
         </Link>
       </div>
 
+      <div className="split">
       <div className="menu" aria-label="Learn">
         <Link className="menu-item" to="/learn" aria-label={plain(t(lang, 'learnPeriods'))}>
           <span className="icon-tile" aria-hidden="true"><Icon name="book" /></span>
@@ -66,6 +67,7 @@ export default function Home({ lang }) {
           </span>
           <span className="menu-chev" aria-hidden="true"><Icon name="chevronRight" /></span>
         </Link>
+      </div>
       </div>
 
       <div className="alert alert-info" role="note">

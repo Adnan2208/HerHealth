@@ -101,10 +101,12 @@ a { color: var(--brand); text-underline-offset: 2px; }
   position: sticky; top: 0; z-index: 20;
   background: linear-gradient(135deg, var(--brand-deep) 0%, var(--brand) 60%, #8d3636 100%);
   color: #fff; padding: var(--s3) var(--s4);
-  display: flex; align-items: center; gap: var(--s3);
+  display: flex; justify-content: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow: 0 6px 20px rgba(92, 30, 30, 0.35);
 }
+/* Inner row: identical to old .topbar flex on phone, constrained on desktop */
+.topbar-inner { display: flex; align-items: center; gap: var(--s3); width: 100%; }
 .topbar h1 { font-size: var(--text-lg); margin: 0; letter-spacing: 0.1px; font-weight: 800; line-height: 1.25; }
 .topbar .sub { font-size: var(--text-xs); opacity: 0.88; font-weight: 500; letter-spacing: 0.2px; }
 .brand-mark {
@@ -171,7 +173,28 @@ a { color: var(--brand); text-underline-offset: 2px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ---------- Content / cards ---------- */
-.content { padding: var(--s4) var(--s4) 112px; display: flex; flex-direction: column; gap: var(--s4); }
+.content { padding: var(--s4) var(--s4) 128px; display: flex; flex-direction: column; gap: 20px; }
+
+/* Page rhythm: every page <section> is a .stack so cards, menus,
+   grids and buttons never touch. Replaces inline height:8 spacers. */
+.stack { display: flex; flex-direction: column; gap: var(--s4); min-width: 0; }
+.stack > * { margin-top: 0; margin-bottom: 0; }
+.stack-sm { display: flex; flex-direction: column; gap: var(--s3); margin-top: var(--s3); }
+.section-head { display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
+.section-head .section-sub { margin: 0; }
+.section-head .step-dots { margin-top: 8px; }
+.sym-count-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+/* Two-column helper for desktop: single column on phone, side-by-side ≥1024px.
+   Dominant primary action stays full-width above the split (see pages). */
+.split { display: flex; flex-direction: column; gap: var(--s4); min-width: 0; }
+/* Narrow helper for forms (Onboarding/Language/Settings): centered 720px on desktop */
+.narrow { width: 100%; min-width: 0; }
+/* Tighter rhythm inside cards (replaces inline height:8/10 spacers) */
+.card.stack { gap: var(--s3); }
+/* Chip + button rows that used to carry inline marginTop/flex styles */
+.chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.btn-row { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+.btn-row .btn { flex: 1; min-width: 140px; }
 .card {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -186,8 +209,8 @@ a { color: var(--brand); text-underline-offset: 2px; }
     linear-gradient(var(--surface-warm), #fbe8d2);
   border-color: var(--line-strong);
 }
-.row { display: flex; gap: 10px; align-items: center; }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.row { display: flex; gap: 12px; align-items: center; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .muted { color: var(--ink-soft); font-size: var(--text-sm); }
 .big-emoji { font-size: 44px; line-height: 1; } /* legacy, for not-yet-migrated pages */
 .center { text-align: center; }
@@ -200,7 +223,7 @@ a { color: var(--brand); text-underline-offset: 2px; }
 }
 .eyebrow .icon { width: 15px; height: 15px; }
 .section-title { font-size: var(--text-2xl); line-height: 1.25; margin: 2px 0 0; font-weight: 800; letter-spacing: -0.2px; }
-.section-sub { margin: 4px 0 0; }
+.section-sub { margin: 0; }
 
 /* Hero (Home / onboarding welcome) */
 .hero { position: relative; overflow: hidden; }
@@ -213,11 +236,11 @@ a { color: var(--brand); text-underline-offset: 2px; }
 .hero p { margin: 0 0 var(--s3); }
 
 /* Menu list (Home actions): icon tile + label + chevron, not flat equal buttons */
-.menu { display: flex; flex-direction: column; gap: 10px; }
+.menu { display: flex; flex-direction: column; gap: var(--s3); }
 .menu-item {
   display: flex; align-items: center; gap: var(--s3);
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 10px var(--s3); text-decoration: none; color: inherit;
+  padding: 14px var(--s4); text-decoration: none; color: inherit;
   box-shadow: var(--shadow-sm), inset 0 1px 0 #fff;
   min-height: 64px;
   transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
@@ -228,7 +251,7 @@ a { color: var(--brand); text-underline-offset: 2px; }
   background: linear-gradient(180deg, #8d3535 0%, var(--brand) 55%, var(--brand-deep) 100%);
   border-color: rgba(92, 30, 30, 0.6); color: #fff;
   box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.22);
-  min-height: 68px;
+  min-height: 76px;
 }
 .menu-item.primary .menu-sub { color: rgba(255, 255, 255, 0.85); }
 .icon-tile {
@@ -240,7 +263,8 @@ a { color: var(--brand); text-underline-offset: 2px; }
 .icon-tile .icon { width: 24px; height: 24px; color: var(--brand); }
 .menu-item.primary .icon-tile { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.35); }
 .menu-item.primary .icon-tile .icon { color: #fff; }
-.menu-text { flex: 1; min-width: 0; font-weight: 800; font-size: var(--text-base); line-height: 1.35; }
+.menu-text { flex: 1; min-width: 0; font-weight: 800; font-size: var(--text-base); line-height: 1.35; overflow-wrap: break-word; }
+.sym, .food, .lang-card, .card { min-width: 0; }
 .menu-sub { display: block; font-weight: 500; font-size: var(--text-sm); color: var(--ink-soft); margin-top: 1px; }
 .menu-chev { color: var(--ink-faint); display: inline-flex; }
 .menu-chev .icon { width: 20px; height: 20px; }
@@ -257,6 +281,9 @@ a { color: var(--brand); text-underline-offset: 2px; }
   display: grid; grid-template-columns: repeat(5, 1fr);
   padding: 6px 6px calc(10px + env(safe-area-inset-bottom)); z-index: 30;
 }
+/* Inner wrapper: display:contents on phone (links stay grid items of .tabbar),
+   becomes the constrained grid itself on desktop (see media queries). */
+.tabbar-inner { display: contents; }
 .tabbar a {
   text-decoration: none; color: var(--ink-soft);
   font-size: 11.5px; font-weight: 800;
@@ -356,11 +383,11 @@ a { color: var(--brand); text-underline-offset: 2px; }
 .step-dots { display: inline-flex; gap: 6px; align-items: center; }
 .step-dots i { width: 26px; height: 7px; border-radius: 99px; background: #e7d3b8; display: block; }
 .step-dots i.done { background: linear-gradient(90deg, var(--brand-2), var(--brand)); box-shadow: var(--shadow-sm); }
-.sym-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.sym-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .sym {
   border: 2px solid var(--line); border-radius: var(--radius); background: var(--surface);
-  min-height: 104px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 6px; font-size: 13px; font-weight: 700; cursor: pointer; padding: 12px 6px 10px;
+  min-height: 116px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; font-size: 13px; font-weight: 700; cursor: pointer; padding: 16px 8px 14px;
   box-shadow: var(--shadow-sm), inset 0 1px 0 #fff; line-height: 1.3; color: var(--ink);
   position: relative;
   transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease), background var(--dur) var(--ease);
@@ -414,7 +441,7 @@ label.lbl .icon { width: 18px; height: 18px; color: var(--brand); }
   padding: 5px 12px; border-radius: var(--radius-pill); margin-bottom: 8px; letter-spacing: 0.2px; }
 
 /* ---------- Food / content grids (shared) ---------- */
-.food-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.food-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .food {
   background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px; text-align: center;
   box-shadow: var(--shadow-sm);
@@ -422,7 +449,7 @@ label.lbl .icon { width: 18px; height: 18px; color: var(--brand); }
 .food .e { font-size: 36px; }
 
 /* ---------- Key-value details ---------- */
-.kv { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 15px; }
+.kv { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--line); font-size: 15px; }
 .kv:last-child { border-bottom: none; }
 .kv span:first-child { color: var(--ink-soft); flex: none; }
 .kv strong, .kv span:last-child { text-align: right; }
@@ -443,7 +470,7 @@ label.lbl .icon { width: 18px; height: 18px; color: var(--brand); }
 .audio-btn:active { transform: scale(0.97); }
 .audio-btn[aria-pressed="true"] { border-color: var(--brand); background: var(--surface-warm); box-shadow: 0 0 0 3px rgba(124,45,45,.12); }
 .audio-btn .icon { width: 18px; height: 18px; color: var(--brand); }
-.lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.lang-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .lang-card {
   border: 2px solid var(--line); background: #fff; border-radius: var(--radius); padding: 14px;
   font-weight: 800; cursor: pointer; min-height: 64px; font-family: inherit; font-size: var(--text-base);
@@ -458,7 +485,7 @@ label.lbl .icon { width: 18px; height: 18px; color: var(--brand); }
 
 /* ---------- Alerts ---------- */
 .alert {
-  border-radius: 14px; padding: 12px 14px; font-size: 15px; line-height: 1.5;
+  border-radius: 14px; padding: 14px 16px; font-size: 15px; line-height: 1.5;
   display: flex; gap: 10px; align-items: flex-start;
   box-shadow: var(--shadow-sm);
 }
@@ -477,11 +504,11 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
 }
 
 /* ---------- Action steps (Results high-risk card) ---------- */
-.steps { margin: 12px 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: step; }
+.steps { margin: 12px 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: step; }
 .steps li {
   display: flex; gap: 12px; align-items: flex-start;
   background: var(--surface-warm); border: 1px solid var(--line);
-  border-radius: 14px; padding: 10px 12px; font-size: 15px; line-height: 1.5;
+  border-radius: 14px; padding: 12px 14px; font-size: 15px; line-height: 1.5;
 }
 .steps li::before {
   counter-increment: step; content: counter(step);
@@ -508,11 +535,49 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .divider { height: 1px; background: var(--line); margin: var(--s2) 0; }
 
-/* ASHA dashboard widens on desktop */
-@media (min-width: 900px) {
+/* ---------- Responsive tiers: 520px phone → 720px tablet → 1080px desktop ---------- */
+/* Tier 0 (base, <700px): phone single column, spacing fixes only. */
+
+/* Tier 1: tablet ≥700px */
+@media (min-width: 700px) {
+  .app-shell { max-width: 720px; }
+  .content { padding: var(--s5) var(--s5) 128px; gap: var(--s5); }
+  .stack { gap: var(--s5); }
+  .card { padding: 20px; }
+  .sym-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--s4); }
+  .food-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--s4); }
+  .lang-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--s4); }
+  .grid2 { gap: var(--s4); }
+  .split { gap: var(--s4); }
+  .tabbar { max-width: 720px; }
+}
+
+/* Tier 2: desktop ≥1024px */
+@media (min-width: 1024px) {
+  .app-shell { max-width: 1080px; }
+  .app-shell.wide { max-width: 1080px; }
+  .content { padding: var(--s6) var(--s6) 128px; }
+  .topbar-inner { max-width: 1080px; margin: 0 auto; }
+  /* Tabbar goes full-bleed; inner row carries the constrained 5-col grid */
+  .tabbar { max-width: none; left: 0; transform: none; display: flex; justify-content: center; }
+  .tabbar-inner {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    max-width: 1080px; margin: 0 auto; width: 100%;
+  }
+  .split { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--s5); align-items: start; }
+  .narrow { max-width: 720px; margin-inline: auto; }
+  /* Never stretch a single primary across the full desktop width */
+  .stack > .btn-primary { max-width: 560px; margin-inline: auto; width: 100%; }
+}
+
+/* ASHA dashboard columns (kept from previous wide view, now consistent with tiers) */
+@media (min-width: 900px) and (max-width: 1023px) {
   .app-shell.wide { max-width: 1060px; }
   .asha-cols { display: grid; grid-template-columns: 380px 1fr; gap: 14px; align-items: start; }
   .tabbar { max-width: 1060px; }
+}
+@media (min-width: 900px) {
+  .asha-cols { display: grid; grid-template-columns: 380px 1fr; gap: 14px; align-items: start; }
 }
 
 /* Respect users who prefer no motion */

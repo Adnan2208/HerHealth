@@ -8,8 +8,10 @@ import { LANGS, t } from '../i18n.js'
 // - text-size setting scales base font (body.text-lg/xl), Indic scripts via Noto Sans
 export default function Settings({ lang, prof, save }) {
   return (
-    <section aria-labelledby="s-title">
+    <section aria-labelledby="s-title" className="stack narrow">
+      <div className="section-head">
       <h2 id="s-title">⚙️ {t(lang, 'settings')}</h2>
+      </div>
 
       <div className="card">
         <label className="lbl" htmlFor="lang-sel">🌐 {t(lang, 'language')}</label>

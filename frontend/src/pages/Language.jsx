@@ -4,9 +4,11 @@ import { LANGS, t } from '../i18n.js'
 export default function Language({ lang, save }) {
   const nav = useNavigate()
   return (
-    <section aria-labelledby="lang-title">
+    <section aria-labelledby="lang-title" className="stack narrow">
+      <div className="section-head">
       <h2 id="lang-title">🌐 {t(lang, 'language')}</h2>
       <p className="muted">Choose / चुनें / निवडा / தேர்வு / ఎంచుకోండి / বেছে নিন</p>
+      </div>
       <div className="lang-grid" role="group" aria-label="Language options">
         {LANGS.map((l) => (
           <button
@@ -23,7 +25,6 @@ export default function Language({ lang, save }) {
           </button>
         ))}
       </div>
-      <div style={{ height: 12 }} />
       <button className="btn btn-primary" onClick={() => nav('/home')} type="button">{t(lang, 'continue')}</button>
     </section>
   )

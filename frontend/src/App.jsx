@@ -49,6 +49,7 @@ function Shell() {
   return (
     <div className="app-shell">
       <header className="topbar" role="banner">
+        <div className="topbar-inner">
         <button className="icon-btn" aria-label="Back" onClick={() => nav(-1)} type="button">
           <Icon name="back" />
         </button>
@@ -61,6 +62,7 @@ function Shell() {
           <span className="badge-note" aria-label="Selected language">
             {(LANGS.find(l => l.code === lang) || LANGS[0]).native}
           </span>
+        </div>
         </div>
       </header>
 
@@ -83,11 +85,13 @@ function Shell() {
       </main>
 
       <nav className="tabbar" aria-label="Main navigation">
+        <div className="tabbar-inner">
         {TABS.map((tab) => (
           <NavLink key={tab.to} to={tab.to} className={({ isActive }) => isActive ? 'active' : ''} aria-label={t(lang, tab.key)}>
             <Icon name={tab.icon} />{t(lang, tab.key)}
           </NavLink>
         ))}
+        </div>
       </nav>
     </div>
   )

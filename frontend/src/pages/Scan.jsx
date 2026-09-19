@@ -48,9 +48,12 @@ export default function Scan({ lang }) {
   }
 
   return (
-    <section aria-labelledby="scan-title">
-      <h2 id="scan-title">📸 {t(lang, 'scan')} - eyelid photo</h2>
-      <div className="card">
+    <section aria-labelledby="scan-title" className="stack">
+      <div className="section-head">
+        <h2 id="scan-title">📸 {t(lang, 'scan')} - eyelid photo</h2>
+      </div>
+      <div className="split">
+      <div className="card stack">
         <p><strong>{t(lang, 'scanHelp')}</strong></p>
         <AudioButton text={t(lang, 'scanHelp')} lang={lang} />
         <p className="muted">{t(lang, 'goodVsBad')}</p>
@@ -60,6 +63,7 @@ export default function Scan({ lang }) {
         </div>
       </div>
 
+      <div className="stack">
       <input
         ref={fileRef} type="file" accept="image/*" capture="environment"
         className="sr-only" id="file-pick" aria-label={t(lang, 'takePhoto')}
@@ -72,26 +76,28 @@ export default function Scan({ lang }) {
       )}
 
       {preview && (
-        <div className="card">
+        <div className="card stack">
           <div className="guide-box">
             {/* eslint-disable-next-line jsx-a11y/alt-text */}
             <img src={preview} alt="Eyelid photo preview" className="preview" style={{ minHeight: 220, objectFit: 'contain' }} />
             <div className="guide-overlay" aria-hidden="true"><span>keep red part here</span></div>
           </div>
           {info && (
-            <div className="row" style={{ marginTop: 8, flexWrap: 'wrap' }} aria-label={t(lang, 'quality')}>
+            <div className="chip-row" aria-label={t(lang, 'quality')}>
               <span className={`chip ${info.okLight ? 'chip-green' : 'chip-yellow'}`}>{info.okLight ? '💡 light OK' : '💡 too dark'}</span>
               <span className={`chip ${info.okSize ? 'chip-green' : 'chip-yellow'}`}>{info.okSize ? '🔍 size OK' : '🔍 too small'}</span>
               <span className="chip chip-grey">{info.w}×{info.h} • {info.kb}KB</span>
             </div>
           )}
-          <div className="grid2" style={{ marginTop: 10 }}>
+          <div className="grid2">
             <button className="btn btn-secondary" onClick={() => { sessionStorage.removeItem('herhealth_img'); setPreview(''); setInfo(null) }} type="button">{t(lang, 'retake')}</button>
             <button className="btn btn-primary" onClick={() => nav('/symptoms')} type="button">{t(lang, 'confirmUse')}</button>
           </div>
           <p className="muted">On upload the server saves your file as <code>image.png</code> then runs the AI pipeline.</p>
         </div>
       )}
+      </div>
+      </div>
     </section>
   )
 }
