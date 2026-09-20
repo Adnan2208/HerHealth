@@ -47,7 +47,7 @@ function Shell() {
   })
 
   return (
-    <div className="app-shell">
+    <div className="app">
       <header className="topbar" role="banner">
         <div className="topbar-inner">
         <button className="icon-btn" aria-label="Back" onClick={() => nav(-1)} type="button">
@@ -66,6 +66,7 @@ function Shell() {
         </div>
       </header>
 
+      <div className="app-shell">
       <main className="content" id="main" tabIndex={-1}>
         <Routes>
           <Route path="/" element={<Onboarding lang={lang} />} />
@@ -83,6 +84,7 @@ function Shell() {
           <Route path="/settings" element={<Settings lang={lang} prof={prof} save={save} />} />
         </Routes>
       </main>
+      </div>
 
       <nav className="tabbar" aria-label="Main navigation">
         <div className="tabbar-inner">

@@ -282,7 +282,7 @@ app = FastAPI(title="HerHealth Ecosystem Anemia Screening API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if FRONTEND_URL == "*" else [o.strip() for o in FRONTEND_URL.split(",")],
+    allow_origins=["*"] if FRONTEND_URL == "*" else [o.strip().rstrip("/") for o in FRONTEND_URL.split(",") if o.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

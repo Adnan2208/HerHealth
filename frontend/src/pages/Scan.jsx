@@ -79,7 +79,7 @@ export default function Scan({ lang }) {
         <div className="card stack">
           <div className="guide-box">
             {/* eslint-disable-next-line jsx-a11y/alt-text */}
-            <img src={preview} alt="Eyelid photo preview" className="preview" style={{ minHeight: 220, objectFit: 'contain' }} />
+            <img src={preview} alt="Eyelid photo preview" className="preview" style={{ minHeight: 'clamp(160px, 40vw, 280px)', maxHeight: '60vh', objectFit: 'contain' }} />
             <div className="guide-overlay" aria-hidden="true"><span>keep red part here</span></div>
           </div>
           {info && (
