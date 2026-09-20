@@ -47,7 +47,8 @@ export default function Hospitals({ lang }) {
         <div className="card">
           <iframe
             title="Nearby hospitals map"
-            style={{ width: '100%', height: 240, border: 0, borderRadius: 12 }}
+            className="map-frame"
+            style={{ width: '100%', height: 'clamp(220px, 40vw, 380px)', border: 0, borderRadius: 12 }}
             src={`https://www.openstreetmap.org/export/embed.html?bbox=${pos.longitude - 0.15}%2C${pos.latitude - 0.1}%2C${pos.longitude + 0.15}%2C${pos.latitude + 0.1}&layer=mapnik&marker=${pos.latitude}%2C${pos.longitude}`}
           />
         </div>

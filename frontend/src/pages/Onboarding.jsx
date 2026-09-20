@@ -12,18 +12,20 @@ export default function Onboarding({ lang }) {
   const intro = 'HerHealth Ecosystem helps you learn about periods and check anemia with an eyelid photo. Your data stays private.'
   return (
     <section aria-labelledby="ob-title" className="stack narrow">
-      <div className="card card-warm center">
+      <div className="card card-warm hero center">
         <div className="big-emoji" aria-hidden="true">🩸🤝</div>
         <h2 id="ob-title" style={{ margin: '8px 0' }}>{t(lang, 'welcome')}</h2>
         <p className="muted">{t(lang, 'homeSub')}</p>
         <AudioButton text={intro} lang={lang} />
       </div>
+      <div className="ob-steps">
       {STEPS.map((s, i) => (
         <div className="card row" key={i}>
           <div className="big-emoji" aria-hidden="true">{s.e}</div>
           <div><strong>Step {i + 1}</strong><br />{lang === 'hi' ? s.hi : s.en}</div>
         </div>
       ))}
+      </div>
       <Link className="btn btn-primary" to="/language" aria-label={t(lang, 'start')}>{t(lang, 'start')}</Link>
       <div className="alert alert-info" role="note">{t(lang, 'privacyNote')}</div>
     </section>
