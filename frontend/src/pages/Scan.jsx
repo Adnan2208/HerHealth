@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { t } from '../i18n.js'
-import { AudioButton } from '../components/UI.jsx'
+import { AudioButton, Chip, Icon, plain } from '../components/UI.jsx'
+import { EyeArt } from '../components/Illustrations.jsx'
 
-// Guided capture: overlay guide + good/bad examples + live quality hints
-// (brightness/size via canvas: icon/color feedback, no paragraphs).
+// Guided capture: overlay guide + good/bad example art + live quality hints
+// (brightness/size via canvas: icon-first chips, no emoji, no paragraphs).
 export default function Scan({ lang }) {
   const [preview, setPreview] = useState(sessionStorage.getItem('herhealth_img') || '')
   const [info, setInfo] = useState(null)
@@ -50,28 +51,42 @@ export default function Scan({ lang }) {
   return (
     <section aria-labelledby="scan-title" className="stack">
       <div className="section-head">
-        <h2 id="scan-title">📸 {t(lang, 'scan')} - eyelid photo</h2>
+        <span className="eyebrow"><Icon name="camera" /> Step 1 of 3</span>
+        <h2 id="scan-title" className="section-title">{plain(t(lang, 'scan'))} - eyelid photo</h2>
+        <div className="step-dots" aria-label="Step 1 of 3: photo">
+          <i className="done" /><i /><i />
+        </div>
       </div>
       <div className="split">
       <div className="card stack">
+        <div className="viewfinder" aria-hidden="true">
+          <EyeArt variant="guide" />
+        </div>
         <p><strong>{t(lang, 'scanHelp')}</strong></p>
         <AudioButton text={t(lang, 'scanHelp')} lang={lang} />
-        <p className="muted">{t(lang, 'goodVsBad')}</p>
-        <div className="grid2" aria-label="Good vs bad examples">
-          <div className="card card-warm center">✅<br /><span style={{ fontSize: 40 }} aria-hidden="true">👁️</span><br /><small>red clear, bright</small></div>
-          <div className="card center">❌<br /><span style={{ fontSize: 40, filter: 'blur(2px) brightness(.6)' }} aria-hidden="true">👁️</span><br /><small>blurry / dark / far</small></div>
+        <div className="example-tiles" aria-label="Good versus bad photo examples">
+          <div className="example-tile">
+            <span className="example-badge ok" aria-hidden="true"><Icon name="check" /></span>
+            <EyeArt variant="good" />
+            <small className="muted">red clear, bright</small>
+          </div>
+          <div className="example-tile">
+            <span className="example-badge bad" aria-hidden="true"><Icon name="x" /></span>
+            <EyeArt variant="bad" />
+            <small className="muted">blurry, dark, far</small>
+          </div>
         </div>
       </div>
 
       <div className="stack">
       <input
         ref={fileRef} type="file" accept="image/*" capture="environment"
-        className="sr-only" id="file-pick" aria-label={t(lang, 'takePhoto')}
+        className="sr-only" id="file-pick" aria-label={plain(t(lang, 'takePhoto'))}
         onChange={(e) => onFile(e.target.files?.[0])}
       />
       {!preview && (
         <button className="btn btn-primary" onClick={() => fileRef.current?.click()} type="button">
-          {t(lang, 'takePhoto')}
+          <Icon name="camera" /> {plain(t(lang, 'takePhoto'))} <Icon name="arrowRight" />
         </button>
       )}
 
@@ -84,14 +99,14 @@ export default function Scan({ lang }) {
           </div>
           {info && (
             <div className="chip-row" aria-label={t(lang, 'quality')}>
-              <span className={`chip ${info.okLight ? 'chip-green' : 'chip-yellow'}`}>{info.okLight ? '💡 light OK' : '💡 too dark'}</span>
-              <span className={`chip ${info.okSize ? 'chip-green' : 'chip-yellow'}`}>{info.okSize ? '🔍 size OK' : '🔍 too small'}</span>
+              <Chip kind={info.okLight ? 'green' : 'yellow'} icon="bolt">{info.okLight ? 'light OK' : 'too dark'}</Chip>
+              <Chip kind={info.okSize ? 'green' : 'yellow'} icon="search">{info.okSize ? 'size OK' : 'too small'}</Chip>
               <span className="chip chip-grey">{info.w}×{info.h} • {info.kb}KB</span>
             </div>
           )}
           <div className="grid2">
-            <button className="btn btn-secondary" onClick={() => { sessionStorage.removeItem('herhealth_img'); setPreview(''); setInfo(null) }} type="button">{t(lang, 'retake')}</button>
-            <button className="btn btn-primary" onClick={() => nav('/symptoms')} type="button">{t(lang, 'confirmUse')}</button>
+            <button className="btn btn-secondary" onClick={() => { sessionStorage.removeItem('herhealth_img'); setPreview(''); setInfo(null) }} type="button"><Icon name="refresh" /> {plain(t(lang, 'retake'))}</button>
+            <button className="btn btn-primary" onClick={() => nav('/symptoms')} type="button"><Icon name="check" /> {plain(t(lang, 'confirmUse'))}</button>
           </div>
           <p className="muted">On upload the server saves your file as <code>image.png</code> then runs the AI pipeline.</p>
         </div>

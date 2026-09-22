@@ -1,41 +1,52 @@
 import { Link } from 'react-router-dom'
 import { t } from '../i18n.js'
-import { Chip } from '../components/UI.jsx'
+import { Chip, Icon, plain } from '../components/UI.jsx'
+import { EmptyArt } from '../components/Illustrations.jsx'
 import { store } from '../lib/api.js'
 
-const DOT = { low: '🟢', moderate: '🟡', low_confidence: '🔵', high: '🔴' }
+const DOT = { low: 'circle', moderate: 'triangle', low_confidence: 'diamond', high: 'square' }
+const KIND = { low: 'green', moderate: 'yellow', low_confidence: 'blue', high: 'red' }
 
 export default function History({ lang }) {
   const h = store.history()
   return (
     <section aria-labelledby="hi-title" className="stack">
       <div className="section-head">
-      <h2 id="hi-title">🕘 {t(lang, 'history')}</h2>
+        <span className="eyebrow"><Icon name="clock" /> Your journey</span>
+        <h2 id="hi-title" className="section-title">{plain(t(lang, 'history'))}</h2>
       </div>
       {h.length === 0 && (
         <div className="card center stack" style={{ alignItems: 'center' }}>
-          <div className="big-emoji" aria-hidden="true">📭</div>
+          <div style={{ width: 'min(100%, 220px)' }} aria-hidden="true">
+            <EmptyArt kind="history" />
+          </div>
           <p className="muted">No checks yet. Your scans will appear here as dots over time.</p>
-          <Link className="btn btn-primary" to="/scan">{t(lang, 'checkAnemia')}</Link>
+          <Link className="btn btn-primary" to="/scan"><Icon name="camera" /> {plain(t(lang, 'checkAnemia'))}</Link>
         </div>
       )}
-      {/* Simple dot trend (not complex charts) for low-literacy users */}
+      {/* Simple shape-coded dot trend (never color alone) for low-literacy users */}
       {h.length > 0 && (
-        <div className="card" aria-label="Result trend">
-          <div style={{ fontSize: 30, letterSpacing: 6 }} aria-hidden="true">
-            {h.slice(0, 12).reverse().map((x) => DOT[x.band] || '⚪').join('')}
+        <div className="card stack">
+          <div className="chip-row" aria-hidden="true">
+            {h.slice(0, 12).reverse().map((x) => (
+              <span key={x.id} className={`chip chip-${KIND[x.band] || 'grey'}`} style={{ padding: 6 }}>
+                <span className={`chip-dot dot-${DOT[x.band] || 'circle'}`} />
+              </span>
+            ))}
           </div>
-          <div className="muted">Oldest → newest (last {Math.min(h.length, 12)})</div>
+          <div className="muted">Oldest to newest (last {Math.min(h.length, 12)})</div>
         </div>
       )}
       {h.map((x) => (
         <div className="card row" key={x.id}>
-          <div style={{ fontSize: 32 }} aria-hidden="true">{DOT[x.band] || '⚪'}</div>
-          <div style={{ flex: 1 }}>
+          <span className={`chip chip-${KIND[x.band] || 'grey'}`} style={{ padding: 8 }} aria-hidden="true">
+            <span className={`chip-dot dot-${DOT[x.band] || 'circle'}`} />
+          </span>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <strong>{x.label}</strong> ({(x.conf * 100).toFixed(0)}%)
             <div className="muted">{new Date(x.at).toLocaleString()} • {(x.symptoms || []).join(', ') || 'no symptoms'}</div>
           </div>
-          <Chip kind={x.band === 'low' ? 'green' : x.band === 'moderate' ? 'yellow' : x.band === 'high' ? 'red' : 'blue'}>{x.band}</Chip>
+          <Chip kind={KIND[x.band] || 'grey'} dot={DOT[x.band] || 'circle'}>{x.band}</Chip>
         </div>
       ))}
     </section>

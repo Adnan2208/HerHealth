@@ -1,13 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { t } from '../i18n.js'
-import { AudioButton, Chip, Icon, RiskBanner } from '../components/UI.jsx'
+import { AudioButton, Chip, Icon, RiskBanner, plain, stripEmoji } from '../components/UI.jsx'
+import { EmptyArt } from '../components/Illustrations.jsx'
 
 // All 4 backend states: low (green) | moderate (yellow) |
 // low_confidence (blue, Hb test) | high (red, ASHA notified).
 const BAND_DOT = { low: 'circle', moderate: 'triangle', high: 'square', low_confidence: 'diamond' }
 const BAND_KIND = { low: 'green', moderate: 'yellow', high: 'red', low_confidence: 'blue' }
-
-const plain = (s) => String(s || '').replace(/^[^\p{L}\p{N}]+/u, '').trim() || s
 
 export default function Results({ lang }) {
   const nav = useNavigate()
@@ -17,12 +16,10 @@ export default function Results({ lang }) {
   if (!res) {
     return (
       <section className="center stack narrow" style={{ alignItems: 'center' }}>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <span className="icon-tile" style={{ width: 72, height: 72, borderRadius: 22 }} aria-hidden="true">
-            <Icon name="camera" />
-          </span>
+        <div style={{ width: 'min(100%, 220px)' }} aria-hidden="true">
+          <EmptyArt kind="results" />
         </div>
-        <h2>No result yet</h2>
+        <h2 className="section-title">No result yet</h2>
         <p className="muted">Take an eyelid photo first.</p>
         <button className="btn btn-primary" onClick={() => nav('/scan')} type="button">
           <Icon name="camera" /> {plain(t(lang, 'checkAnemia'))}
@@ -32,7 +29,7 @@ export default function Results({ lang }) {
   }
 
   const band = res.risk_band || 'low'
-  const readout = `${band === 'low' ? t(lang, 'riskLow') : band === 'moderate' ? t(lang, 'riskModerate') : band === 'high' ? t(lang, 'riskHigh') : t(lang, 'riskLowConf')}. AI says ${res.label} with ${(res.confidence * 100).toFixed(0)} percent confidence.`
+  const readout = `${stripEmoji(band === 'low' ? t(lang, 'riskLow') : band === 'moderate' ? t(lang, 'riskModerate') : band === 'high' ? t(lang, 'riskHigh') : t(lang, 'riskLowConf'))}. AI says ${res.label} with ${(res.confidence * 100).toFixed(0)} percent confidence.`
 
   return (
     <section aria-labelledby="res-title" className="stack">
@@ -41,7 +38,9 @@ export default function Results({ lang }) {
       {res.mock && !res.demo && <div className="alert alert-info" role="note"><Icon name="info" /><span>Server ran in <code>ANEMIA_MOCK=1</code> mode (no TF). Deploy with the real model for medical use.</span></div>}
 
       <RiskBanner band={band} lang={lang} confidence={res.confidence} />
-      <AudioButton text={readout} lang={lang} />
+      <div>
+        <AudioButton text={readout} lang={lang} />
+      </div>
 
       <div className="split">
       <div className="card details-card stack">

@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
 import { t } from '../i18n.js'
-import { AudioButton } from '../components/UI.jsx'
+import { AudioButton, Icon, plain, stripEmoji } from '../components/UI.jsx'
+import { HeroIllustration, TrustArt } from '../components/Illustrations.jsx'
 
 const STEPS = [
-  { e: '📚', en: 'Learn about periods: pictures + voice, no reading needed', hi: 'मासिक धर्म सीखें: चित्र + आवाज़' },
-  { e: '📸', en: 'Photo of lower eyelid: AI checks anemia risk', hi: 'पलक की फोटो: AI एनीमिया जांच' },
-  { e: '🔒', en: 'Private by design: you control what is shared', hi: 'पूरी निजता: आपकी अनुमति से ही साझा' },
+  { icon: 'book', en: 'Learn about periods: pictures + voice, no reading needed', hi: 'मासिक धर्म सीखें: चित्र + आवाज़' },
+  { icon: 'camera', en: 'Photo of lower eyelid: AI checks anemia risk', hi: 'पलक की फोटो: AI एनीमिया जांच' },
+  { icon: 'shield', en: 'Private by design: you control what is shared', hi: 'पूरी निजता: आपकी अनुमति से ही साझा' },
 ]
 
 export default function Onboarding({ lang }) {
@@ -13,21 +14,31 @@ export default function Onboarding({ lang }) {
   return (
     <section aria-labelledby="ob-title" className="stack narrow">
       <div className="card card-warm hero center">
-        <div className="big-emoji" aria-hidden="true">🩸🤝</div>
-        <h2 id="ob-title" style={{ margin: '8px 0' }}>{t(lang, 'welcome')}</h2>
+        <div className="hero-art" aria-hidden="true" style={{ width: 'min(100%, 280px)' }}>
+          <HeroIllustration />
+        </div>
+        <h2 id="ob-title" className="display-title">{stripEmoji(t(lang, 'welcome'))}</h2>
         <p className="muted">{t(lang, 'homeSub')}</p>
-        <AudioButton text={intro} lang={lang} />
+        <div className="hero-actions">
+          <AudioButton text={intro} lang={lang} />
+        </div>
       </div>
       <div className="ob-steps">
       {STEPS.map((s, i) => (
-        <div className="card row" key={i}>
-          <div className="big-emoji" aria-hidden="true">{s.e}</div>
+        <div className="card row" key={i} style={{ alignItems: 'flex-start' }}>
+          <span className="step-num" aria-hidden="true">{i + 1}</span>
+          <span className="icon-tile" aria-hidden="true"><Icon name={s.icon} /></span>
           <div><strong>Step {i + 1}</strong><br />{lang === 'hi' ? s.hi : s.en}</div>
         </div>
       ))}
       </div>
-      <Link className="btn btn-primary" to="/language" aria-label={t(lang, 'start')}>{t(lang, 'start')}</Link>
-      <div className="alert alert-info" role="note">{t(lang, 'privacyNote')}</div>
+      <Link className="btn btn-primary" to="/language" aria-label={stripEmoji(t(lang, 'start'))}>
+        {plain(t(lang, 'start'))} <Icon name="arrowRight" />
+      </Link>
+      <div className="trust" role="note">
+        <TrustArt mini />
+        <span>{plain(t(lang, 'privacyNote'))}</span>
+      </div>
     </section>
   )
 }

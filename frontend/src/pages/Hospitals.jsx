@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { t } from '../i18n.js'
+import { Icon, plain } from '../components/UI.jsx'
 import { apiHospitals } from '../lib/api.js'
 
 const FALLBACK = [
@@ -39,10 +40,11 @@ export default function Hospitals({ lang }) {
   return (
     <section aria-labelledby="h-title" className="stack">
       <div className="section-head">
-      <h2 id="h-title">🏥 {t(lang, 'findHospital')}</h2>
-      <button className="btn btn-primary" onClick={locate} type="button">📍 Locate me + nearest list</button>
-      <p className="muted">{note}</p>
+        <span className="eyebrow"><Icon name="pin" /> Nearby care</span>
+        <h2 id="h-title" className="section-title">{plain(t(lang, 'findHospital'))}</h2>
       </div>
+      <button className="btn btn-primary" onClick={locate} type="button"><Icon name="pin" /> Locate me + nearest list</button>
+      <p className="muted">{note}</p>
       {pos && (
         <div className="card">
           <iframe
@@ -54,16 +56,21 @@ export default function Hospitals({ lang }) {
         </div>
       )}
       {list.map((h, i) => (
-        <div className="card" key={i}>
-          <strong>{h.name}</strong>
-          <div className="muted">{h.area} {h.distance_km != null ? `• ${h.distance_km} km` : ''}</div>
-          <div className="btn-row">
-            <a className="btn btn-secondary" href={`tel:${h.phone}`} aria-label={`Call ${h.name}`}>📞 {h.phone}</a>
+        <div className="card stack" key={i}>
+          <div className="row">
+            <span className="icon-tile" aria-hidden="true"><Icon name="pin" /></span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <strong>{h.name}</strong>
+              <div className="muted">{h.area} {h.distance_km != null ? `• ${h.distance_km} km` : ''}</div>
+            </div>
+          </div>
+          <div className="btn-row" style={{ marginTop: 0 }}>
+            <a className="btn btn-secondary" href={`tel:${h.phone}`} aria-label={`Call ${h.name}`}><Icon name="phone" /> {h.phone}</a>
             <a
               className="btn btn-secondary"
               href={`https://www.google.com/maps/dir/?api=1&destination=${h.lat},${h.lon}`}
               target="_blank" rel="noreferrer" aria-label={`Directions to ${h.name}`}
-            >🧭 Directions</a>
+            ><Icon name="navigation" /> Directions</a>
           </div>
         </div>
       ))}
