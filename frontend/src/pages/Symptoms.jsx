@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { t } from '../i18n.js'
-import { Icon, SYMPTOMS } from '../components/UI.jsx'
+import { Icon, ProcessingOverlay, SYMPTOMS, plain } from '../components/UI.jsx'
 import { apiPredict, demoPredict, store } from '../lib/api.js'
 import { voiceInput } from '../lib/speech.js'
 import { storedImageFile } from './Scan.jsx'
@@ -14,9 +14,14 @@ export default function Symptoms({ lang, prof }) {
   const [name, setName] = useState(prof.name || '')
   const [phone, setPhone] = useState(prof.phone || '')
   const [busy, setBusy] = useState(false)
+  const [pct, setPct] = useState(8)
+  const [phase, setPhase] = useState(0)
   const [err, setErr] = useState('')
   const [listening, setListening] = useState(false)
   const nav = useNavigate()
+  const timers = useRef([])
+
+  useEffect(() => () => { timers.current.forEach(clearInterval) }, [])
 
   const toggle = (id) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]))
 
@@ -39,7 +44,16 @@ export default function Symptoms({ lang, prof }) {
     const file = storedImageFile()
     if (!file) { setErr('Please add an eyelid photo first (Back to Scan).'); return }
     const symptoms = allSymptoms()
-    setBusy(true); setErr('')
+    setBusy(true); setErr(''); setPct(8); setPhase(0)
+    // Animated progress while the (possibly slow, cold-start) model runs
+    const tick = setInterval(() => {
+      setPct((p) => {
+        const next = p + (p < 40 ? 7 : p < 75 ? 4 : 1.5)
+        return Math.min(next, 96)
+      })
+      setPhase((s) => Math.min(s + 0.12, 3))
+    }, 500)
+    timers.current.push(tick)
     let coords = { lat: '', lon: '' }
     try {
       const pos = await new Promise((res) => {
@@ -51,19 +65,23 @@ export default function Symptoms({ lang, prof }) {
     try {
       let res
       try {
-        res = await apiPredict({ file, symptoms, name, phone, language: lang, ...coords })
+        // shareForCare OFF omits name/phone from the predict call (payload unchanged when ON)
+        const share = prof.shareForCare !== false
+        res = await apiPredict({ file, symptoms, name: share ? name : '', phone: share ? phone : '', language: lang, ...coords })
       } catch (netErr) {
         // Offline / no backend (static Netlify preview): clearly-labeled demo so UI is testable
         console.warn('backend unreachable, demo fallback', netErr)
         res = { ...demoPredict(symptoms), demoReason: String(netErr.message || netErr) }
       }
+      setPct(100); setPhase(3)
       sessionStorage.setItem('herhealth_result', JSON.stringify(res))
       store.pushHistory({ band: res.risk_band, label: res.label, conf: res.confidence, symptoms, demo: !!res.demo })
-      nav('/results')
+      setTimeout(() => nav('/results'), 450)
     } catch (e) {
       setErr(e.message)
-    } finally {
       setBusy(false)
+    } finally {
+      clearInterval(tick)
     }
   }
 
@@ -128,8 +146,9 @@ export default function Symptoms({ lang, prof }) {
 
       {err && <div className="alert alert-err" role="alert"><Icon name="octagon" /><span>{err}</span></div>}
       <button className="btn btn-primary" onClick={submit} disabled={busy} type="button">
-        {busy ? (<><span className="spinner" aria-hidden="true" /> {t(lang, 'analyzing')}</>) : (<><Icon name="search" /> {t(lang, 'analyze').replace(/^[^\p{L}\p{N}]+/u, '')}</>)}
+        {busy ? (<><span className="spinner" aria-hidden="true" /> {t(lang, 'analyzing')}</>) : (<><Icon name="search" /> {plain(t(lang, 'analyze'))}</>)}
       </button>
+      {busy && <ProcessingOverlay pct={pct} step={Math.floor(phase)} />}
     </section>
   )
 }

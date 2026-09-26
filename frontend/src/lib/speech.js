@@ -3,12 +3,18 @@
 
 const LANG_VOICE = { en: 'en-IN', hi: 'hi-IN', mr: 'mr-IN', ta: 'ta-IN', te: 'te-IN', bn: 'bn-IN' }
 
+export function stripSpoken(s) {
+  return String(s || '').replace(/\p{Extended_Pictographic}/gu, '').replace(/\s{2,}/g, ' ').trim()
+}
+
 export function speak(text, lang = 'en') {
   try {
+    const clean = stripSpoken(text)
+    if (!clean) return false
     const synth = window.speechSynthesis
     if (!synth) return false
     synth.cancel()
-    const u = new SpeechSynthesisUtterance(text)
+    const u = new SpeechSynthesisUtterance(clean)
     u.lang = LANG_VOICE[lang] || 'en-IN'
     u.rate = 0.92
     synth.speak(u)

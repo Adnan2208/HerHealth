@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
-import { HashRouter, NavLink, Route, Routes, useNavigate } from 'react-router-dom'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { HashRouter, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { LANGS, t } from './i18n.js'
 import { store } from './lib/api.js'
 import { stopSpeak } from './lib/speech.js'
-import { Icon } from './components/UI.jsx'
+import { Icon, plain } from './components/UI.jsx'
 import Onboarding from './pages/Onboarding.jsx'
 import Language from './pages/Language.jsx'
 import Home from './pages/Home.jsx'
@@ -18,7 +18,7 @@ import History from './pages/History.jsx'
 import Settings from './pages/Settings.jsx'
 
 function useProfile() {
-  const [prof, setProf] = useState(() => ({ lang: 'en', textSize: 'm', talkback: true, ashaPhone: '', ...store.profile() }))
+  const [prof, setProf] = useState(() => ({ lang: 'en', textSize: 'm', talkback: true, ashaPhone: '', shareForCare: true, ...store.profile() }))
   useEffect(() => {
     document.body.classList.toggle('text-lg', prof.textSize === 'l')
     document.body.classList.toggle('text-xl', prof.textSize === 'xl')
@@ -30,21 +30,62 @@ function useProfile() {
 
 const TABS = [
   { to: '/home', key: 'home', icon: 'home' },
-  { to: '/scan', key: 'scan', icon: 'camera' },
   { to: '/learn', key: 'learn', icon: 'book' },
+  { to: '/scan', key: 'scan', icon: 'camera', fab: true },
   { to: '/diet', key: 'diet', icon: 'bowl' },
   { to: '/settings', key: 'more', icon: 'settings' },
 ]
+
+function Tabbar({ lang }) {
+  const loc = useLocation()
+  const innerRef = useRef(null)
+  const [indicator, setIndicator] = useState({ left: 0, width: 0 })
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = innerRef.current
+      if (!el) return
+      const active = el.querySelector('a.active')
+      if (!active) { setIndicator({ left: 0, width: 0 }); return }
+      setIndicator({ left: active.offsetLeft, width: active.offsetWidth })
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [loc.pathname])
+
+  return (
+    <nav className="tabbar" aria-label="Main navigation">
+      <div className="tabbar-inner" ref={innerRef}>
+        {indicator.width > 0 && (
+          <span className="tab-indicator" aria-hidden="true" style={{ left: indicator.left, width: indicator.width }} />
+        )}
+        {TABS.map((tab) => (
+          <NavLink
+            key={tab.to} to={tab.to}
+            className={({ isActive }) => `${isActive ? 'active' : ''}${tab.fab ? ' tab-scan' : ''}`}
+            aria-label={plain(t(lang, tab.key))}
+          >
+            <Icon name={tab.icon} />{plain(t(lang, tab.key))}
+          </NavLink>
+        ))}
+      </div>
+    </nav>
+  )
+}
 
 function Shell() {
   const [prof, save] = useProfile()
   const lang = prof.lang
   const nav = useNavigate()
+  const loc = useLocation()
 
   useEffect(() => {
     // stop narration on every route change (predictable audio behavior)
     stopSpeak()
-  })
+  }, [loc.pathname])
+
+  const hideNav = loc.pathname === '/' || loc.pathname === '/language'
 
   return (
     <div className="app">
@@ -86,15 +127,7 @@ function Shell() {
       </main>
       </div>
 
-      <nav className="tabbar" aria-label="Main navigation">
-        <div className="tabbar-inner">
-        {TABS.map((tab) => (
-          <NavLink key={tab.to} to={tab.to} className={({ isActive }) => isActive ? 'active' : ''} aria-label={t(lang, tab.key)}>
-            <Icon name={tab.icon} />{t(lang, tab.key)}
-          </NavLink>
-        ))}
-        </div>
-      </nav>
+      {!hideNav && <Tabbar lang={lang} />}
     </div>
   )
 }
