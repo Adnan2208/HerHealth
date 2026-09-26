@@ -5,7 +5,7 @@ import { TrustArt } from '../components/Illustrations.jsx'
 // Accessibility decisions (annotated for reviewers):
 // - focus order: header back -> main heading -> actions (logical, linear)
 // - TalkBack labels on every icon-only control (aria-label)
-// - contrast: ink #241611 on #fffdfb = 15:1; risk text uses dark ink on tinted bg (>=6.7:1)
+// - contrast: ink #2C362B on #FFE4FA = 12.5:1; risk text uses dark ink on tinted bg (>=6.7:1)
 // - targets >=48px (see --tap); focus-visible 3px blue ring
 // - text-size setting scales base font (body.text-lg/xl), Indic scripts via Noto Sans subsets
 export default function Settings({ lang, prof, save }) {
